@@ -1,6 +1,8 @@
 #include "raylib.h"
 
 const int BALL_SIZE = 20;
+const int FONT_SIZE = BALL_SIZE * 3;
+const int NET_SIZE = BALL_SIZE * 0.75;
 
 const int PADDLE_WIDTH = BALL_SIZE;
 const int PADDLE_HEIGHT = BALL_SIZE * 10;
@@ -24,6 +26,9 @@ int main(void) {
 
   int w = GetScreenWidth();
   int h = GetScreenHeight();
+
+  const Vector2 topScreenMiddle = {(float)w / 2, 0};
+  const Vector2 bottomScreenMiddle = {(float)w / 2, h};
 
   int ball_x = (w - BALL_SIZE) / 2;
   int ball_y = (h - BALL_SIZE) / 2;
@@ -90,13 +95,25 @@ int main(void) {
       paddle_left_y += GetFrameTime() * PADDLE_SPEED;
     }
 
-    /* DRAW ON SCREEN */
-
     BeginDrawing();
+
     ClearBackground(BLACK);
+
+    /* DRAW BALL AND PADDLES */
     DrawRectangleRec(paddle_left, LIGHTGRAY);
     DrawRectangleRec(paddle_right, LIGHTGRAY);
     DrawRectangleRec(ball, LIGHTGRAY);
+
+    /* DRAW NET */
+    DrawLineDashed(topScreenMiddle, bottomScreenMiddle, NET_SIZE, NET_SIZE,
+                   LIGHTGRAY);
+
+    /* DRAW SCORE */
+    DrawText(TextFormat("%d", score_left), w / 2 - (2 * PADDING + FONT_SIZE),
+             2 * PADDING, FONT_SIZE, WHITE);
+    DrawText(TextFormat("%d", score_right), w / 2 + PADDING + FONT_SIZE,
+             2 * PADDING, FONT_SIZE, WHITE);
+
     EndDrawing();
   }
   CloseWindow();
