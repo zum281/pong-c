@@ -15,8 +15,12 @@ int main(void) {
 
   SetTargetFPS(60);
 
+  // TODO: use something a bit more random
   float ball_speed_x = BALL_SIZE * 10;
   float ball_speed_y = BALL_SIZE * 10;
+
+  int score_left = 0;
+  int score_right = 0;
 
   int w = GetScreenWidth();
   int h = GetScreenHeight();
@@ -32,9 +36,20 @@ int main(void) {
 
   while (!WindowShouldClose()) {
 
-    /* BALL MOVEMENT */
+    /* DEFINE BALL AND PADDLES */
 
-    if (ball_x > w - BALL_SIZE || ball_x < 0) {
+    Rectangle ball = {ball_x, ball_y, BALL_SIZE, BALL_SIZE};
+
+    Rectangle paddle_left = {paddle_left_x, paddle_left_y, PADDLE_WIDTH,
+                             PADDLE_HEIGHT};
+
+    Rectangle paddle_right = {paddle_right_x, paddle_right_y, PADDLE_WIDTH,
+                              PADDLE_HEIGHT};
+
+    /* BALL MOVEMENT AND COLLISION */
+
+    if (CheckCollisionRecs(paddle_left, ball) ||
+        CheckCollisionRecs(paddle_right, ball)) {
       ball_speed_x *= -1;
     }
 
@@ -44,6 +59,19 @@ int main(void) {
 
     ball_x += GetFrameTime() * ball_speed_x;
     ball_y += GetFrameTime() * ball_speed_y;
+
+    /* SCORING */
+    if (ball_x < 0) {
+      score_right++;
+      ball_x = (w - BALL_SIZE) / 2;
+      ball_y = (h - BALL_SIZE) / 2;
+    }
+
+    if (ball_x > w - BALL_SIZE) {
+      score_left++;
+      ball_x = (w - BALL_SIZE) / 2;
+      ball_y = (h - BALL_SIZE) / 2;
+    }
 
     /* PADDLE CONTROLS */
 
@@ -57,19 +85,10 @@ int main(void) {
     if (IsKeyDown(KEY_W) && paddle_left_y > 0) {
       paddle_left_y -= GetFrameTime() * PADDLE_SPEED;
     }
+
     if (IsKeyDown(KEY_S) && paddle_left_y < h - PADDLE_HEIGHT) {
       paddle_left_y += GetFrameTime() * PADDLE_SPEED;
     }
-
-    /* DEFINE BALL AND PADDLES */
-
-    Rectangle ball = {ball_x, ball_y, BALL_SIZE, BALL_SIZE};
-
-    Rectangle paddle_left = {paddle_left_x, paddle_left_y, PADDLE_WIDTH,
-                             PADDLE_HEIGHT};
-
-    Rectangle paddle_right = {paddle_right_x, paddle_right_y, PADDLE_WIDTH,
-                              PADDLE_HEIGHT};
 
     /* DRAW ON SCREEN */
 
