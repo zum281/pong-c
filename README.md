@@ -3,7 +3,7 @@
 ## Quick start
 
 ```bash
-make pong RAYLIB=<path/to/raylib>
+make pong
 ./pong
 
 ```
